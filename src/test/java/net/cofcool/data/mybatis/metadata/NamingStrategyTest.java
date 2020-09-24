@@ -10,11 +10,11 @@ class NamingStrategyTest {
 
     @Test
     void physicNameTest() {
-        Assertions.assertEquals(TABLE_NAME, NamingStrategy.defaultStrategy().physicalName("u", NAME));
+        Assertions.assertEquals(TABLE_NAME, NamingStrategy.defaultStrategy("u").physicalName(NAME));
     }
 
     @Test
     void logicNameTest() {
-        Assertions.assertEquals(NAME, NamingStrategy.defaultStrategy().logicalName("u", TABLE_NAME));
+        Assertions.assertEquals(NAME, NamingStrategy.defaultStrategy("u").logicalName(TABLE_NAME));
     }
 }

@@ -2,31 +2,30 @@ package net.cofcool.data.mybatis.metadata;
 
 import java.sql.JDBCType;
 import java.util.Set;
+import org.mybatis.dynamic.sql.SqlColumn;
 import org.mybatis.dynamic.sql.SqlTable;
 
 public interface TableInfo {
 
-    ColumnInfo getColumn(String columnName);
+    ColumnInfo column(String columnName);
 
-    Class<?> getJavaType();
+    Class<?> javaType();
 
-    Set<ColumnInfo> getAllColumns();
+    Set<ColumnInfo> allColumns();
 
-    SqlTable getTable();
+    SqlTable table();
 
-    String getName();
+    String name();
 
-    IdInfo getId();
+    IdInfo id();
 
     interface ColumnInfo {
 
-        String getName();
+        String name();
 
-        String getAlias();
+        Class<?> javaType();
 
-        Class<?> getJavaType();
-
-        JDBCType getJDBCType();
+        JDBCType jdbcType();
 
         default boolean insertable() {
             return true;
@@ -40,13 +39,15 @@ public interface TableInfo {
             return false;
         }
 
+        SqlColumn<?> sqlColumn();
+
     }
 
     interface IdInfo extends ColumnInfo {
 
-        String getGeneratedType();
+        String generatedType();
 
-        IdGenerator getGenerator();
+        String generator();
 
         @Override
         default boolean isId() {

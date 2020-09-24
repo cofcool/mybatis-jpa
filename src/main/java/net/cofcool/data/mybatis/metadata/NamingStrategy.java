@@ -3,18 +3,24 @@ package net.cofcool.data.mybatis.metadata;
 
 public interface NamingStrategy {
 
-    String physicalName(String prefix, String name);
+    String physicalName(String name);
 
-    String logicalName(String prefix, String name);
+    String logicalName(String name);
 
-    static NamingStrategy defaultStrategy() {
-        return new DefaultStrategy();
+    static NamingStrategy defaultStrategy(String prefix) {
+        return new DefaultStrategy(prefix);
     }
 
     final class DefaultStrategy implements NamingStrategy {
 
+        private final String prefix;
+
+        public DefaultStrategy(String prefix) {
+            this.prefix = prefix;
+        }
+
         @Override
-        public String physicalName(String prefix, String name) {
+        public String physicalName(String name) {
             String newPrefix = prefix == null ? "" : prefix + "_";
 
             StringBuilder builder = new StringBuilder(name);
@@ -32,7 +38,7 @@ public interface NamingStrategy {
         }
 
         @Override
-        public String logicalName(String prefix, String name) {
+        public String logicalName(String name) {
             StringBuilder builder = new StringBuilder(name);
             if (prefix != null) {
                 builder.delete(0, prefix.length());
@@ -47,5 +53,6 @@ public interface NamingStrategy {
 
             return builder.toString();
         }
+
     }
 }

@@ -14,6 +14,10 @@ public abstract class MetadataHelper {
     }
 
     public static void setMetadataManager(MetadataManager metadataManager) {
+        if (MetadataHelper.metadataManager != null) {
+            throw new IllegalStateException("MetadataHelper already held metadataManager");
+        }
         MetadataHelper.metadataManager = metadataManager;
     }
+
 }

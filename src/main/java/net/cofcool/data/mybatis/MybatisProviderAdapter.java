@@ -8,7 +8,7 @@ public class MybatisProviderAdapter {
     public <T> String insert(T entity) {
         return SqlBuilder
             .insert(entity)
-            .into(MetadataHelper.getMetadataManager().getTable(entity.getClass()).getTable())
+            .into(MetadataHelper.getMetadataManager().getTable(entity.getClass()).table())
             .build()
             .render(RenderingStrategies.MYBATIS3)
             .getInsertStatement();
