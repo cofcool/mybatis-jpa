@@ -10,30 +10,29 @@ import net.cofcool.data.mybatis.metadata.TableInfo;
 public class DefaultMetadataManager implements MetadataManager {
 
     public Map<Class<?>, TableInfo> tableInfoMap = new HashMap<>();
-    private MybatisConfiguration configuration;
+    private final MybatisConfiguration configuration;
+
+    public DefaultMetadataManager(MybatisConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
     @Override
-    public TableInfo getTable(Class<?> tableType) {
+    public TableInfo table(Class<?> tableType) {
         TableInfo tableInfo = tableInfoMap.get(tableType);
         if (tableInfo == null) {
-            throw new TableNotFoundException(String.format("The class %s has not parsing a entity", tableType.getName()));
+            throw new TableNotFoundException(String.format("The class %s has not be parsed to a entity", tableType.getName()));
         }
         return tableInfo;
     }
 
     @Override
-    public Set<TableInfo> getAllTables() {
+    public Set<TableInfo> allTables() {
         return new HashSet<>(tableInfoMap.values());
     }
 
     @Override
     public MybatisConfiguration getConfiguration() {
         return configuration;
-    }
-
-    @Override
-    public void setConfiguration(MybatisConfiguration configuration) {
-        this.configuration = configuration;
     }
 
     @Override

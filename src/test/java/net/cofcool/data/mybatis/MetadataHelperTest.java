@@ -10,7 +10,7 @@ class MetadataHelperTest {
 
     @BeforeAll
     static void setup() {
-        MetadataHelper.setMetadataManager(new DefaultMetadataManager());
+        MetadataHelper.setMetadataManager(new DefaultMetadataManager(new MybatisConfiguration()));
     }
 
     @Test

@@ -1,0 +1,1 @@
+create table `user` (user_id bigint primary key auto_increment, username varchar(32) not null, sign_up_time timestamp(2) not null, `desc` varchar(64) default null);

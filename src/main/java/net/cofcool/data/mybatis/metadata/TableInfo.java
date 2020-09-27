@@ -23,9 +23,13 @@ public interface TableInfo {
 
         String name();
 
+        String property();
+
         Class<?> javaType();
 
         JDBCType jdbcType();
+
+        <T> T readValue(Object entity);
 
         default boolean insertable() {
             return true;

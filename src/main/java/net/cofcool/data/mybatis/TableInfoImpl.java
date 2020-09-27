@@ -130,7 +130,8 @@ public class TableInfoImpl implements TableInfo {
             }
             columnInfo
                 .javaType(field.getType())
-                .name(name);
+                .name(name)
+                .readField(field);
 
             columnInfos.put(name, columnInfo);
         }
@@ -150,6 +151,7 @@ public class TableInfoImpl implements TableInfo {
         private Class<?> javaType;
         private JDBCType jdbcType;
         private SqlColumn<?> column;
+        private Field readField;
 
         private SqlColumn<?> buildColumn() {
             return new SqlColumn.Builder()
@@ -157,6 +159,21 @@ public class TableInfoImpl implements TableInfo {
                 .withName(name)
                 .withTable(TableInfoImpl.this.table())
                 .build();
+        }
+
+        @Override
+        public String property() {
+            return readField.getName();
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public <T> T readValue(Object entity) {
+            try {
+                return (T) readField.get(entity);
+            } catch (IllegalAccessException ignore) { }
+
+            return null;
         }
 
         @Override

@@ -5,13 +5,11 @@ import net.cofcool.data.mybatis.MybatisConfiguration;
 
 public interface MetadataManager {
 
-    TableInfo getTable(Class<?> tableType);
+    TableInfo table(Class<?> tableType);
 
-    Set<TableInfo> getAllTables();
+    Set<TableInfo> allTables();
 
     MybatisConfiguration getConfiguration();
-
-    void setConfiguration(MybatisConfiguration configuration);
 
     void parseTable(Class<?> tableType);
 

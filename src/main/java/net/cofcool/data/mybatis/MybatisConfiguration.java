@@ -4,10 +4,18 @@ import java.util.HashMap;
 import java.util.Map;
 import net.cofcool.data.mybatis.metadata.IdGenerator;
 import net.cofcool.data.mybatis.metadata.NamingStrategy;
+import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
 
 
 public class MybatisConfiguration extends Configuration {
+
+    public MybatisConfiguration(Environment environment) {
+        super(environment);
+    }
+
+    public MybatisConfiguration() {
+    }
 
     private NamingStrategy namingStrategy = NamingStrategy.defaultStrategy(null);
 
