@@ -49,7 +49,7 @@ public interface TableInfo {
 
         JDBCType jdbcType();
 
-        <T> T readValue(Object entity);
+        Object readValue(Object entity);
 
         default boolean insertable() {
             return true;

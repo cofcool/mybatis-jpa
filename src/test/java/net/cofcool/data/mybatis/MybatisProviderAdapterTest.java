@@ -37,7 +37,7 @@ class MybatisProviderAdapterTest {
     }
 
     @Test
-    void insert() {
+    void insertTest() {
         System.out.println(
             new MybatisProviderAdapter()
                 .insert(new User(1L, "test", "test", LocalDateTime.now()))
@@ -45,10 +45,10 @@ class MybatisProviderAdapterTest {
     }
 
     @Test
-    void select() {
+    void queryTest() {
         System.out.println(
             new MybatisProviderAdapter()
-                .select(new User(1L, "test", null, LocalDateTime.now()))
+                .query(new User(1L, "test", null, LocalDateTime.now()))
         );
     }
 }

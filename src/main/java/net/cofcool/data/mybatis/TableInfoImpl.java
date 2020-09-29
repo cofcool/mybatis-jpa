@@ -178,7 +178,8 @@ public class TableInfoImpl implements TableInfo {
                 .withJdbcType(jdbcType)
                 .withName(name)
                 .withTable(TableInfoImpl.this.table())
-                .build();
+                .build()
+                .as(property());
         }
 
         @Override
@@ -186,11 +187,10 @@ public class TableInfoImpl implements TableInfo {
             return readField.getName();
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        public <T> T readValue(Object entity) {
+        public Object readValue(Object entity) {
             try {
-                return (T) readField.get(entity);
+                return readField.get(entity);
             } catch (IllegalAccessException ignore) { }
 
             return null;

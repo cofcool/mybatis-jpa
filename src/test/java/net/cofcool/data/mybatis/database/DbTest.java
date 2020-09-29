@@ -19,6 +19,7 @@ package net.cofcool.data.mybatis.database;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Properties;
 import javax.sql.DataSource;
 import net.cofcool.data.mybatis.DefaultMetadataManager;
@@ -69,6 +70,19 @@ class DbTest {
         configuration.addMapper(UserMapper.class);
         UserMapper userMapper = configuration.getMapper(UserMapper.class, factory.openSession());
         Assertions.assertTrue(userMapper.insert(new User(1L, "test", "test", LocalDateTime.now())));
+    }
+
+    @Test
+    void queryTest() {
+        Configuration configuration = factory.getConfiguration();
+        configuration.addMapper(UserMapper.class);
+        UserMapper userMapper = configuration.getMapper(UserMapper.class, factory.openSession());
+        for (int i = 0; i < 10; i++) {
+            userMapper.insert(new User((long) i, "test" + i, "test", LocalDateTime.now()));
+        }
+        List<User> users = userMapper.query(new User(1L, null, null, null));
+        Assertions.assertEquals(1, users.size());
+        Assertions.assertNotNull(userMapper.query(new User(1L, "test", "test", LocalDateTime.now())));
     }
 
 

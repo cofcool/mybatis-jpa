@@ -17,9 +17,10 @@
 package net.cofcool.data.mybatis;
 
 import java.io.Serializable;
+import java.util.List;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.SelectProvider;
 
 /**
  * CRUD 基类, 定义基本方法
@@ -31,6 +32,9 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface CrudMapper<T, ID extends Serializable> {
 
-    @InsertProvider(value = MybatisProviderAdapter.class)
-    boolean insert(@Param("record") T entity);
+    @InsertProvider(value = MybatisProviderAdapter.class, method = "insert")
+    boolean insert(T entity);
+
+    @SelectProvider(value = MybatisProviderAdapter.class, method = "query")
+    List<T> query(T entity);
 }
