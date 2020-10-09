@@ -17,11 +17,6 @@
 package net.cofcool.data.mybatis.database;
 
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Properties;
-import javax.sql.DataSource;
 import net.cofcool.data.mybatis.DefaultMetadataManager;
 import net.cofcool.data.mybatis.MetadataHelper;
 import net.cofcool.data.mybatis.MybatisConfiguration;
@@ -39,6 +34,12 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Properties;
 
 /**
  *
@@ -69,7 +70,9 @@ class DbTest {
         Configuration configuration = factory.getConfiguration();
         configuration.addMapper(UserMapper.class);
         UserMapper userMapper = configuration.getMapper(UserMapper.class, factory.openSession());
-        Assertions.assertTrue(userMapper.insert(new User(1L, "test", "test", LocalDateTime.now())));
+        for (int i = 0; i < 10; i++) {
+            Assertions.assertTrue(userMapper.insert(new User((long) i, "test" + i, "test", LocalDateTime.now())));
+        }
     }
 
     @Test
@@ -83,6 +86,16 @@ class DbTest {
         List<User> users = userMapper.query(new User(1L, null, null, null));
         Assertions.assertEquals(1, users.size());
         Assertions.assertNotNull(userMapper.query(new User(1L, "test", "test", LocalDateTime.now())));
+    }
+
+    @Test
+    void deleteTest() {
+        Configuration configuration = factory.getConfiguration();
+        configuration.addMapper(UserMapper.class);
+        UserMapper userMapper = configuration.getMapper(UserMapper.class, factory.openSession());
+        long id = 10;
+        userMapper.insert(new User(id, "test", "test", LocalDateTime.now()));
+        Assertions.assertTrue(userMapper.delete(new User(id, null, null, null)));
     }
 
 

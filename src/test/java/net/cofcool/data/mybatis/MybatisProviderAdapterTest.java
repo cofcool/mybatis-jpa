@@ -16,10 +16,12 @@
 
 package net.cofcool.data.mybatis;
 
-import java.time.LocalDateTime;
 import net.cofcool.data.mybatis.model.User;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
 
 /**
  *
@@ -49,6 +51,22 @@ class MybatisProviderAdapterTest {
         System.out.println(
             new MybatisProviderAdapter()
                 .query(new User(1L, "test", null, LocalDateTime.now()))
+        );
+    }
+
+    @Test
+    void deleteTest() {
+        System.out.println(
+            new MybatisProviderAdapter()
+                .delete(new User(1L, "test", null, LocalDateTime.now()))
+        );
+    }
+
+    @Test
+    void deleteParamErrorTest() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> new MybatisProviderAdapter().delete(new User())
         );
     }
 }

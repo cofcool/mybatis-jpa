@@ -16,22 +16,27 @@
 
 package net.cofcool.data.mybatis;
 
-import java.util.Set;
 import net.cofcool.data.mybatis.metadata.TableInfo;
 import net.cofcool.data.mybatis.metadata.TableInfo.ColumnInfo;
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
 import org.apache.ibatis.builder.annotation.ProviderMethodResolver;
 import org.mybatis.dynamic.sql.SqlBuilder;
 import org.mybatis.dynamic.sql.SqlColumn;
+import org.mybatis.dynamic.sql.delete.DeleteDSL;
+import org.mybatis.dynamic.sql.delete.DeleteModel;
 import org.mybatis.dynamic.sql.insert.InsertDSL;
 import org.mybatis.dynamic.sql.render.RenderingStrategy;
 import org.mybatis.dynamic.sql.select.QueryExpressionDSL;
 import org.mybatis.dynamic.sql.select.SelectModel;
 
+import java.util.Objects;
+import java.util.Set;
+
 /**
  *
  * @author CofCool
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class MybatisProviderAdapter implements ProviderMethodResolver {
 
     private static final RenderingStrategy JPA_RENDERING_STRATEGY = new JpaRenderingStrategy(
@@ -56,7 +61,6 @@ public class MybatisProviderAdapter implements ProviderMethodResolver {
         return MetadataHelper.getMetadataManager().table(entity.getClass());
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     public <T> String query(T entity) {
         if (entity instanceof ParamMap) {
             entity = (T) ((ParamMap) entity).get("parameters");
@@ -69,15 +73,27 @@ public class MybatisProviderAdapter implements ProviderMethodResolver {
         QueryExpressionDSL<SelectModel> dsl = SqlBuilder
             .select(columns)
             .from(tableInfo.table());
-        T finalEntity = entity;
 
         dsl.where(SqlBuilder.constant("1"), SqlBuilder.isEqualTo(1));
         for (ColumnInfo c : columnInfos) {
             SqlColumn column = c.sqlColumn();
-            dsl.where().and(column, SqlBuilder.isEqualToWhenPresent(c.readValue(finalEntity)));
+            dsl.where().and(column, SqlBuilder.isEqualToWhenPresent(c.readValue(entity)));
         }
 
         return dsl.build().render(JPA_RENDERING_STRATEGY).getSelectStatement();
     }
+
+    public <T> String delete(T entity) {
+        TableInfo tableInfo = getTable(entity);
+        Object val = tableInfo.id().readValue(entity);
+        Objects.requireNonNull(val, "The entity id is must be specified");
+
+        DeleteDSL<DeleteModel> dsl = SqlBuilder.deleteFrom(tableInfo.table());
+        SqlColumn column = tableInfo.id().sqlColumn();
+        dsl.where(column, SqlBuilder.isEqualTo(val));
+
+        return dsl.build().render(JPA_RENDERING_STRATEGY).getDeleteStatement();
+    }
+
 
 }
