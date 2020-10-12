@@ -16,6 +16,8 @@
 
 package net.cofcool.data.mybatis;
 
+import java.util.Objects;
+import java.util.Set;
 import net.cofcool.data.mybatis.metadata.TableInfo;
 import net.cofcool.data.mybatis.metadata.TableInfo.ColumnInfo;
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
@@ -29,11 +31,10 @@ import org.mybatis.dynamic.sql.render.RenderingStrategy;
 import org.mybatis.dynamic.sql.select.QueryExpressionDSL;
 import org.mybatis.dynamic.sql.select.SelectModel;
 
-import java.util.Objects;
-import java.util.Set;
-
 /**
+ * Provider 对应的 CRUD 方法, 如 {@link org.apache.ibatis.annotations.SelectProvider}, {@link org.apache.ibatis.annotations.InsertProvider} 等
  *
+ * @see CrudMapper
  * @author CofCool
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -43,8 +44,14 @@ public class MybatisProviderAdapter implements ProviderMethodResolver {
         MetadataHelper.getMetadataManager().getConfiguration()
     );
 
+    /**
+     * 生成插入语句
+     * @param entity 实体
+     * @param <T> 实体类型
+     * @return 插入语句
+     */
     public <T> String insert(T entity) {
-        TableInfo tableInfo = getTable(entity);
+        TableInfo tableInfo = MetadataHelper.tableInfo(entity);
         InsertDSL<T> dsl = SqlBuilder
             .insert(entity)
             .into(tableInfo.table());
@@ -57,15 +64,17 @@ public class MybatisProviderAdapter implements ProviderMethodResolver {
             .getInsertStatement();
     }
 
-    public static <T> TableInfo getTable(T entity) {
-        return MetadataHelper.getMetadataManager().table(entity.getClass());
-    }
-
+    /**
+     * 生成查询语句, 不为 {@code null} 的属性作为查询条件
+     * @param entity 实体
+     * @param <T> 实体类型
+     * @return 查询语句
+     */
     public <T> String query(T entity) {
         if (entity instanceof ParamMap) {
             entity = (T) ((ParamMap) entity).get("parameters");
         }
-        TableInfo tableInfo = getTable(entity);
+        TableInfo tableInfo = MetadataHelper.tableInfo(entity);
         Set<ColumnInfo> columnInfos = tableInfo.allColumns();
         SqlColumn[] columns = columnInfos.stream()
             .map(ColumnInfo::sqlColumn)
@@ -83,8 +92,14 @@ public class MybatisProviderAdapter implements ProviderMethodResolver {
         return dsl.build().render(JPA_RENDERING_STRATEGY).getSelectStatement();
     }
 
+    /**
+     * 生成删除语句
+     * @param entity 实体
+     * @param <T> 实体类型
+     * @return 删除语句
+     */
     public <T> String delete(T entity) {
-        TableInfo tableInfo = getTable(entity);
+        TableInfo tableInfo = MetadataHelper.tableInfo(entity);
         Object val = tableInfo.id().readValue(entity);
         Objects.requireNonNull(val, "The entity id is must be specified");
 

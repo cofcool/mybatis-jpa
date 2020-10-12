@@ -16,13 +16,12 @@
 
 package net.cofcool.data.mybatis;
 
+import java.io.Serializable;
+import java.util.List;
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.SelectProvider;
-
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * CRUD 基类, 定义基本方法
@@ -34,12 +33,27 @@ import java.util.List;
 @Mapper
 public interface CrudMapper<T, ID extends Serializable> {
 
+    /**
+     * 插入
+     * @param entity 实体
+     * @return 是否成功
+     */
     @InsertProvider(value = MybatisProviderAdapter.class, method = "insert")
     boolean insert(T entity);
 
+    /**
+     * 查询, 不为 {@code null} 的属性作为查询条件
+     * @param entity 实体
+     * @return 查询数据集
+     */
     @SelectProvider(value = MybatisProviderAdapter.class, method = "query")
     List<T> query(T entity);
 
+    /**
+     * 删除
+     * @param entity 实体
+     * @return 是否成功
+     */
     @DeleteProvider(value = MybatisProviderAdapter.class, method = "delete")
     boolean delete(T entity);
 

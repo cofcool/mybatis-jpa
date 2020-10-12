@@ -16,10 +16,12 @@
 
 package net.cofcool.data.mybatis;
 
+import java.util.Objects;
 import net.cofcool.data.mybatis.metadata.MetadataManager;
+import net.cofcool.data.mybatis.metadata.TableInfo;
 
 /**
- *
+ * 元数据相关工具类, 如 {@link MetadataManager}, {@link TableInfo} 等
  * @author CofCool
  */
 public abstract class MetadataHelper {
@@ -29,15 +31,46 @@ public abstract class MetadataHelper {
     MetadataHelper() {
     }
 
+    /**
+     * 获取 {@link MetadataManager} 实例
+     * @return metadataManager 实例
+     * @throws NullPointerException MetadataHelper 未持有 metadataManager
+     */
     public static MetadataManager getMetadataManager() {
+        Objects.requireNonNull(metadataManager, "metadataManager must be specified");
         return metadataManager;
     }
 
+    /**
+     * 配置 {@link MetadataManager}
+     * @param metadataManager metadataManager 实例
+     * @throws IllegalStateException MetadataHelper 已持有 metadataManager
+     */
     public static void setMetadataManager(MetadataManager metadataManager) {
         if (MetadataHelper.metadataManager != null) {
             throw new IllegalStateException("MetadataHelper already held metadataManager");
         }
         MetadataHelper.metadataManager = metadataManager;
+    }
+
+    /**
+     * 根据实体获取表元数据
+     * @param entity 实体
+     * @param <T> 实体类型
+     * @return 表元数据
+     */
+    public static <T> TableInfo tableInfo(T entity) {
+        return metadataManager.table(entity.getClass());
+    }
+
+    /**
+     * 根据实体类型获取表元数据
+     * @param entityType 实体类型
+     * @param <T> 实体类型
+     * @return 表元数据
+     */
+    public static <T> TableInfo tableInfo(Class<T> entityType) {
+        return metadataManager.table(entityType);
     }
 
 }
